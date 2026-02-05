@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Delna's Diamond Surprise | Feb 5</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    
+    <style>
+        body { 
+            background: radial-gradient(circle at center, #0f172a 0%, #020617 100%);
+            color: white; 
+            font-family: 'Poppins', sans-serif;
+            overflow: hidden;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .diamond-text {
+            font-family: 'Dancing Script', cursive;
+            background: linear-gradient(to right, #b9f2ff, #ffffff, #00bfff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            filter: drop-shadow(0 0 10px rgba(185, 242, 255, 0.5));
+        }
+
+        .glass {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+        }
+
+        .gift-box {
+            font-size: clamp(50px, 10vw, 80px);
+            filter: drop-shadow(0 0 15px rgba(0, 191, 255, 0.3));
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            cursor: pointer;
+        }
+
+        .gift-box:hover {
+            transform: scale(1.2) rotate(5deg);
+            filter: drop-shadow(0 0 25px rgba(0, 191, 255, 0.6));
+        }
+
+        .floating-diamond {
+            position: absolute;
+            pointer-events: none;
+            opacity: 0.2;
+            animation: floatUp 10s infinite linear;
+        }
+
+        @keyframes floatUp {
+            0% { transform: translateY(110vh) rotate(0deg); opacity: 0; }
+            10% { opacity: 0.3; }
+            90% { opacity: 0.3; }
+            100% { transform: translateY(-10vh) rotate(360deg); opacity: 0; }
+        }
+
+        .btn-close {
+            background: linear-gradient(45deg, #0891b2, #1d4ed8);
+            transition: 0.3s;
+        }
+
+        .btn-close:hover { transform: scale(1.05); box-shadow: 0 0 20px rgba(6, 182, 212, 0.4); }
+    </style>
+</head>
+<body>
+
+    <audio id="hbdMusic" loop>
+        <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3" type="audio/mpeg">
+    </audio>
+
+    <script>
+        for (let i = 0; i < 15; i++) {
+            let d = document.createElement('div');
+            d.className = 'floating-diamond';
+            d.innerHTML = '💎';
+            d.style.left = Math.random() * 100 + 'vw';
+            d.style.animationDelay = Math.random() * 10 + 's';
+            d.style.fontSize = Math.random() * 20 + 10 + 'px';
+            document.body.appendChild(d);
+        }
+    </script>
+
+    <div class="text-center z-10 px-6">
+        <h1 class="text-6xl md:text-8xl mb-4 diamond-text">Delna</h1>
+        <p class="text-cyan-400 tracking-[0.4em] uppercase text-[10px] md:text-xs mb-16 opacity-70 font-semibold">
+            The Diamond Edition • February 05
+        </p>
+
+        <h2 class="text-lg md:text-xl font-light mb-10 text-gray-400 italic">
+            Tap a gift to unlock a treasure...
+        </h2>
+
+        <div class="flex gap-6 md:gap-12 justify-center items-center">
+            <div class="gift-box" onclick="openGift(1)">🎁</div>
+            <div class="gift-box" onclick="openGift(2)">🎁</div>
+            <div class="gift-box" onclick="openGift(3)">🎁</div>
+        </div>
+    </div>
+
+    <div id="overlay" class="fixed inset-0 bg-black/80 backdrop-blur-md hidden z-40 transition-opacity" onclick="closeGift()"></div>
+    
+    <div id="modal" class="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 glass p-10 md:p-14 rounded-[40px] hidden z-50 w-[85%] max-w-md text-center border border-white/10">
+        <div class="text-5xl mb-6">✨</div>
+        <div id="message" class="text-xl md:text-2xl leading-relaxed font-light text-cyan-50 mb-8"></div>
+        <button onclick="closeGift()" class="btn-close px-10 py-3 rounded-full text-xs font-bold tracking-widest uppercase">
+            Keep Exploring
+        </button>
+    </div>
+
+    <script>
+        const messages = {
+            1: "To the person who brings light... 💎<br><span class='text-sm text-gray-400 mt-4 block leading-loose'>Ninte koode samsairkkumbo oru positive energy kittunnu. Keep shining like the diamond you are!</span>",
+            2: "Simply, Thank You! ✨<br><span class='text-sm text-gray-400 mt-4 block leading-loose'>Ente life-il oru nalla friend aayathinu. Innu ninte ellaa swapnangalum saphalamakaatte. Happy Birthday!</span>",
+            3: "The Diamond Quality! 👑<br><span class='text-sm text-gray-400 mt-4 block leading-loose'>Pressure-il polum thalaraatha ninte aa personality aanu ninte ettavum valiya bhangi. Stay precious forever!</span>"
+        };
+
+        let musicStarted = false;
+
+        function openGift(id) {
+            // Start music on first click
+            if (!musicStarted) {
+                const music = document.getElementById('hbdMusic');
+                music.volume = 0.5;
+                music.play().catch(e => console.log("Audio play blocked"));
+                musicStarted = true;
+            }
+
+            // Set message
+            document.getElementById('message').innerHTML = messages[id];
+            
+            // Show modal
+            document.getElementById('modal').classList.remove('hidden');
+            document.getElementById('overlay').classList.remove('hidden');
+            
+            // Confetti Blast
+            confetti({
+                particleCount: 150,
+                spread: 80,
+                origin: { y: 0.6 },
+                colors: ['#b9f2ff', '#ffffff', '#00bfff', '#ffd700']
+            });
+        }
+
+        function closeGift() {
+            document.getElementById('modal').classList.add('hidden');
+            document.getElementById('overlay').classList.add('hidden');
+        }
+    </script>
+</body>
+</html>
