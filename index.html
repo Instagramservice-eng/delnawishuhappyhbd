@@ -104,7 +104,48 @@
             <div class="gift-box" onclick="openGift(3)">🎁</div>
         </div>
     </div>
+    <div class="scratch-container" style="margin-top: 50px; text-align: center;">
+    <h3 style="color: #00e5ff; font-family: 'Dancing Script', cursive;">Scratch for a Surprise! 🎁</h3>
     
+    <div id="scratch-box" style="position: relative; width: 300px; height: 150px; margin: 20px auto; border: 2px solid #00e5ff; border-radius: 10px; overflow: hidden; background: #000;">
+        <div style="position: absolute; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; color: #00e5ff; font-size: 24px; font-weight: bold; z-index: 1;">
+            Happy Birthday Delna! 💎
+        </div>
+        
+        <canvas id="scratch-canvas" width="300" height="150" style="position: absolute; top: 0; left: 0; z-index: 2; cursor: crosshair;"></canvas>
+    </div>
+</div>
+
+<script>
+    const canvas = document.getElementById('scratch-canvas');
+    const ctx = canvas.getContext('2d');
+
+    // Canvas cover color (Silver/Grey 'Sandpaper' look)
+    ctx.fillStyle = '#888';
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    // Scratching effect
+    let isDrawing = false;
+    function scratch(e) {
+        if (!isDrawing) return;
+        const rect = canvas.getBoundingClientRect();
+        const x = (e.clientX || e.touches[0].clientX) - rect.left;
+        const y = (e.clientY || e.touches[0].clientY) - rect.top;
+        
+        ctx.globalCompositeOperation = 'destination-out';
+        ctx.beginPath();
+        ctx.arc(x, y, 20, 0, Math.PI * 2);
+        ctx.fill();
+    }
+
+    canvas.addEventListener('mousedown', () => isDrawing = true);
+    canvas.addEventListener('mouseup', () => isDrawing = false);
+    canvas.addEventListener('mousemove', scratch);
+    canvas.addEventListener('touchstart', () => isDrawing = true);
+    canvas.addEventListener('touchend', () => isDrawing = false);
+    canvas.addEventListener('touchmove', scratch);
+</script>
+
 
     <div id="overlay" class="fixed inset-0 bg-black/80 backdrop-blur-md hidden z-40 transition-opacity" onclick="closeGift()"></div>
     
